@@ -1,0 +1,19 @@
+version: "3"
+services:
+  base: &base
+    build:
+      context: .
+    working_dir: /app
+    volumes:
+      - ".:/app"
+      - ~/.ivy2:/root/.ivy2
+      - ~/.sbt:/root/.sbt
+    entrypoint: bash
+
+  test:
+    <<: *base
+    entrypoint: sbt test
+
+  build-native-image:
+    <<: *base
+    entrypoint: sbt ni

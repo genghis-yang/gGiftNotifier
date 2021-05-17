@@ -5,6 +5,7 @@ version := "0.1.0"
 licenses += "GPLv3" -> url("https://www.gnu.org/licenses/gpl-3.0.html")
 
 val catsEffectVersion = "2.5.1"
+val graalvmVersion = "21.1.0"
 val http4sVersion = "0.21.22"
 val jsoupVersion = "1.3.1"
 
@@ -13,7 +14,8 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-circe" % http4sVersion,
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "org.jsoup" % "jsoup" % jsoupVersion,
-  "org.typelevel" %% "cats-effect" % catsEffectVersion
+  "org.typelevel" %% "cats-effect" % catsEffectVersion,
+  "org.graalvm.nativeimage" % "svm" % graalvmVersion % Provided
 )
 
 scalacOptions ++= Seq(
@@ -55,3 +57,31 @@ scalacOptions ++= Seq(
   "-Ycache-plugin-class-loader:last-modified", // Enables caching of classloaders for compiler plugins
   "-Ycache-macro-class-loader:last-modified" // and macro definitions. This can lead to performance improvements.
 )
+
+// Note that the REPL can’t really cope with -Ywarn-unused:imports or -Xfatal-warnings so you should turn them off for the console.
+Compile / console / scalacOptions --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings")
+Test / scalacOptions ++= Seq("-Yrangepos")
+
+graalVMNativeImageOptions ++= Seq(
+  "--allow-incomplete-classpath", // allow the image build with an incomplete class path. Report type resolution errors at runtime when they are accessed the first time, instead of during the image build.
+  "--enable-https", // enable https support in a generated image.
+  "--enable-http", // enable http support in a generated image.
+  "--enable-all-security-services", // add all security service classes to the generated image.
+  //  "--initialize-at-build-time=scala,scala.runtime.Statics", // a comma-separated list of packages and classes (and implicitly all of their subclasses) that must be initialized at runtime and not during image building. An empty string is currently not supported.
+  "--libc=musl", // selects the libc implementation to use. Available implementations: glibc, musl, bionic
+  "--no-fallback", // build stand-alone image or report failure
+  //  "--report-unsupported-elements-at-runtime",               // report usage of unsupported methods and fields at run time when they are accessed the first time, instead of as an error during image building
+  "--verbose", // enable verbose output
+  "--static", // build a statically-linked executable (requires libc and zlib static libraries).
+  "--no-server",
+  "-H:+ReportExceptionStackTraces",
+  //  "-H:+TraceClassInitialization",
+  "--trace-object-instantiation=java.util.Random",
+  "-H:+AddAllCharsets",
+  "-J-Xms3072m",
+  "-J-Xmx6144m"
+)
+
+enablePlugins(GraalVMNativeImagePlugin)
+
+addCommandAlias("ni", "graalvm-native-image:packageBin")
