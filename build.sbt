@@ -1,4 +1,4 @@
-name := "gnotifier"
+name := "gGiftNotifier"
 organization := "info.genghis"
 scalaVersion := "2.13.5"
 version := "0.1.0"
@@ -64,24 +64,36 @@ Test / scalacOptions ++= Seq("-Yrangepos")
 
 graalVMNativeImageOptions ++= Seq(
   "--allow-incomplete-classpath", // allow the image build with an incomplete class path. Report type resolution errors at runtime when they are accessed the first time, instead of during the image build.
-  "--enable-https", // enable https support in a generated image.
-  "--enable-http", // enable http support in a generated image.
-  "--enable-all-security-services", // add all security service classes to the generated image.
-  //  "--initialize-at-build-time=scala,scala.runtime.Statics", // a comma-separated list of packages and classes (and implicitly all of their subclasses) that must be initialized at runtime and not during image building. An empty string is currently not supported.
+  // "--enable-all-security-services", // add all security service classes to the generated image.
+  // "--enable-http", // enable http support in the generated image
+  // "--enable-https", // enable https support in the generated image
+  // "--enable-url-protocols", // list of comma separated URL protocols to enable.
+  // "--features", // a comma-separated list of fully qualified Feature implementation classes
+  /*
+  Each class can be initialized either (1) at run time, or (2) at build time.
+  To specify class-initialization policies, two flags are provided:
+    --initialize-at-build-time and --initialize-at-run-time.
+  These flags allow specifying a policy for whole packages or individual classes.
+  Refer: https://www.graalvm.org/reference-manual/native-image/ClassInitialization/#explicitly-specifying-class-initialization
+   */
+  "--initialize-at-build-time", // Without specifying classes or packages, the whole class hierarchy are initialized at build time
+  "--initialize-at-run-time=scala.util.Random$", // `scala.util.Random$` depends on java.util.Random, which cannot be initialized at build time
+  // "--install-exit-handlers", // provide java.lang.Terminator exit handlers for executable images
   "--libc=musl", // selects the libc implementation to use. Available implementations: glibc, musl, bionic
   "--no-fallback", // build stand-alone image or report failure
-  //  "--report-unsupported-elements-at-runtime",               // report usage of unsupported methods and fields at run time when they are accessed the first time, instead of as an error during image building
-  "--verbose", // enable verbose output
+  // "--report-unsupported-elements-at-runtime", // report usage of unsupported methods and fields at run time when they are accessed the first time, instead of as an error during image building
+  // "--shared", // build shared library
   "--static", // build a statically-linked executable (requires libc and zlib static libraries).
-  "--no-server",
-  "-H:+ReportExceptionStackTraces",
-  //  "-H:+TraceClassInitialization",
-  "--trace-object-instantiation=java.util.Random",
-  "-H:+AddAllCharsets",
-  "-J-Xms3072m",
-  "-J-Xmx6144m"
+  // "--target", // selects native-image compilation target (in <OS>-<architecture> format). Defaults to host's OS-architecture pair.
+  "--verbose", // enable verbose output
+  "-J-Xms3072m", // Pass `-Xms3072m` directly to the JVM running the image generator
+  "-J-Xmx6144m",
+  "-H:+AddAllCharsets", // Make all hosted charsets available at run time.
+  "-H:+ReportExceptionStackTraces", // Show exception stack traces for exceptions during image building.).
+  // Find out all options at https://chriswhocodes.com/graalvm_native_image_ce_jdk11_options.html
 )
 
+// Except sbt-native-package, sbt-native-image is another option for building native image in Scala
 enablePlugins(GraalVMNativeImagePlugin)
 
 addCommandAlias("ni", "graalvm-native-image:packageBin")

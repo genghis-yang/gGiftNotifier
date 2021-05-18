@@ -6,6 +6,7 @@ services:
     working_dir: /app
     volumes:
       - ".:/app"
+      - ~/.cache:/root/.cache
       - ~/.ivy2:/root/.ivy2
       - ~/.sbt:/root/.sbt
     entrypoint: bash
