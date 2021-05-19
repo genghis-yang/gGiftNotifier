@@ -7,7 +7,7 @@ services:
 script:
   - docker-compose run test
   - docker-compose run build-native-image
-  - mv target/graalvm-native-image/gGiftNotifier aws/lambda/ && chmod +x aws/lambda/*
+  - sudo mv target/graalvm-native-image/gGiftNotifier aws/lambda/ && sudo chmod +x aws/lambda/*
 
 deploy:
   provider: lambda
