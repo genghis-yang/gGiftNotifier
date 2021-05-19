@@ -7,3 +7,16 @@ services:
 script:
   - docker-compose run test
   - docker-compose run build-native-image
+  - mv target/graalvm-native-image/gGiftNotifier aws/lambda/ && chmod +x aws/lambda/*
+
+deploy:
+  provider: lambda
+  access_key_id:
+    secure: FcudJIvX+ziZrt0bopUyydVQz30VqjXGnXdNN/mXsvM0Rnjf34xwdCllF+s4jFVAij8NVxJyq0MxSq1zdaN21Burf7pRpPdRPY3U3/2xWHt4mJiJItA/u8yY1NRzElD/7/4tSyAB3FKAYVkDATBo4/oLBwrMQfJ0M63ibzha4qf+nujEd24DbhFlaxV0g7TyNuGNUKWkEsg6fGqVT27AvEGnXSe9VH0fKPJPMTFTf6VF1xL/Ag2PwnCU/9D8MvnQrd0xGsGJ+omrIbAeM/zSa/RwwgNiVBdooJHSXu3HHNwjhq73rLsAikm/zRGmYJbLcb7TlStDILU+6VqPq/dHefyFSZz1SMOxTqdvyrX+xJKHs8H6LdMdQQHgY/hvuikjiTr+oSI2QSFgMIyR+WBj6dU2ET1Fq2i3j/fBj5R+B6sbUZLtjH+ppuFlGx1kM+Z4UVwPTp/2SESptCx+MUJJOmnvRRhn2uOsrn8eNn5NDrYe0xm+QZvSRaOVQAGdmM9paxNN1QRn+9bx1H7rOR/zO/q8ksYkGPNS62nX80GjvvqGtERJjouzMaTHH/i0k/919JRgkXaqUufWddM1Pbw4ftjx+xucDS09FbyIG6a77voGq0FhJyaFbKM5wYQn1FXVSQqBTqTsJ5q+yezBFiQgekcZvu99frgdFHhvWqvvsIQ=
+  secret_access_key:
+    secure: AfBUfJaGwRp8b8bHC7yD/iREtej9LztQ+HTGS6cDtvymiEEP1iG1eyifMZYKS0str56rxpaHLFOhpsmqe0JY1yrwurYwfTx49SaPh69gMI+ezHulY+16r8qXCk89M7jH78qEgc35pveaE6+5fh8/J2PC16sCQOCIH7k5/63DoZLHI8JEgQzYedZa5ivvn9wOUSakkDRti8L03lcQMYGcNU5uVvfg6ZpC3TeNtMicHuEO7hRMduNI6CEYj4QI22L0KhfRiXYstM5ga6lXFerMjWEEOLcGWOZJtejpqjLIuLX/l2EGPhp6GA+53MLHedT01DHcCzNcvFc5ywKxH/Y4XitSCiZQhKvJyTiuD7kOmCEH1coilRGrC3gfyhmqm4ZRUMbfQWNP269RsQSZKjvxBoWQRvV1AOtKA8A+fOTQwymaYvnR9UgCDFE8fMvKdlnf7xFLJFeyPQmyv2AxAg97f6oPGgmxxRMnMIKWfgNSi/D6YkdeVI2AIRvrz0lIOdOmYtConIlui+P9ph2Ku+lMHKO/TzvE0LkAnLAdsPpOS3pWM0VmKygRhrGl+mc9yDn5iI24IA74wuQHa3p1iIvqoO6miQuoT9ArWAK/CFAS0ST6bvwNWQ7yc2TuvY7igjcf7G9h76yBDJ/daNjOPJBZCtRqccXBIdr5LF1UeQemOWU=
+  region: ap-northeast-2
+  timeout: 60
+  function_name: gGiftNotifier
+  zip: ./aws/lambda
+  edge: true # opt in to dpl v2
