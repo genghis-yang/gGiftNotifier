@@ -8,6 +8,7 @@ val catsEffectVersion = "2.5.1"
 val graalvmVersion = "21.1.0"
 val http4sVersion = "0.21.22"
 val jsoupVersion = "1.3.1"
+val specs2Version = "4.12.0"
 
 libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-blaze-client" % http4sVersion,
@@ -15,7 +16,8 @@ libraryDependencies ++= Seq(
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "org.jsoup" % "jsoup" % jsoupVersion,
   "org.typelevel" %% "cats-effect" % catsEffectVersion,
-  "org.graalvm.nativeimage" % "svm" % graalvmVersion % Provided
+  "org.graalvm.nativeimage" % "svm" % graalvmVersion % Provided,
+  "org.specs2" %% "specs2-core" % specs2Version % Test
 )
 
 scalacOptions ++= Seq(
@@ -89,7 +91,7 @@ graalVMNativeImageOptions ++= Seq(
   "-J-Xms3072m", // Pass `-Xms3072m` directly to the JVM running the image generator
   "-J-Xmx6144m",
   "-H:+AddAllCharsets", // Make all hosted charsets available at run time.
-  "-H:+ReportExceptionStackTraces", // Show exception stack traces for exceptions during image building.).
+  "-H:+ReportExceptionStackTraces" // Show exception stack traces for exceptions during image building.).
   // Find out all options at https://chriswhocodes.com/graalvm_native_image_ce_jdk11_options.html
 )
 

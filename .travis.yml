@@ -1,6 +1,11 @@
 language: minimal
 dist: focal
 
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+(\.\d+)?$/
+
 services:
   - docker
 

@@ -1,4 +1,4 @@
-package info.genghis.notifier
+package info.genghis.notifier.monitor
 
 import cats.effect.Sync
 import cats.implicits._
