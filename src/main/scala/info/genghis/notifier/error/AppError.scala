@@ -1,19 +1,17 @@
 package info.genghis.notifier.error
 
+import cats.Show
 import io.circe.Json
 import org.http4s.Status
 
 sealed trait AppError extends Throwable
 
 object AppError {
-  implicit class AppErrorOps(appError: AppError) {
-    def getMessage(): String = appError.toString
-    override def toString: String = appError match {
-      case PagerDutyTriggerError(request, body)       => s"Cannot trigger PagerDuty $request with body: $body"
-      case WatchingError(errStatus, errPayload) => s"Cannot watch destination web page, got $errStatus, $errPayload"
-      case MissingApplicationConfigError        => "Missing required environment variables"
-      case NoDestinationGoodFoundError          => "Cannot find the destination good"
-    }
+  implicit val showAppError: Show[AppError] = Show.show {
+    case PagerDutyTriggerError(request, body) => s"Cannot trigger PagerDuty $request with body: $body"
+    case WatchingError(errStatus, errPayload) => s"Cannot watch destination web page, got $errStatus, $errPayload"
+    case MissingApplicationConfigError        => "Missing required environment variables"
+    case NoDestinationGoodFoundError          => "Cannot find the destination good"
   }
 }
 

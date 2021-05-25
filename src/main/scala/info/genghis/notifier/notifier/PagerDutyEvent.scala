@@ -1,4 +1,4 @@
-package info.genghis.notifier
+package info.genghis.notifier.notifier
 
 import io.circe.syntax._
 import io.circe.{Encoder, Json}

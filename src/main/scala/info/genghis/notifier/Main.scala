@@ -1,8 +1,11 @@
 package info.genghis.notifier
 
 import cats.effect._
+import cats.implicits._
 import info.genghis.notifier.config.AppConfig
 import info.genghis.notifier.error.AppError
+import info.genghis.notifier.monitor.GiftMonitor
+import info.genghis.notifier.notifier.PagerDutyNotifier
 import org.http4s.client.Client
 import org.http4s.client.blaze.BlazeClientBuilder
 
@@ -23,7 +26,7 @@ object Main extends IOApp {
   } yield ExitCode.Success
 
   def handleError(x: IO[ExitCode]): IO[ExitCode] = x.handleErrorWith {
-    case err: AppError => IO(println(err.getMessage)).map(_ => ExitCode.Error)
+    case err: AppError => IO(println(err.show)).map(_ => ExitCode.Error)
     case other         => IO(other.printStackTrace()).map(_ => ExitCode.Error)
   }
 
