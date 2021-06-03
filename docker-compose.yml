@@ -1,8 +1,7 @@
 version: "3"
 services:
   base: &base
-    build:
-      context: .
+    image: yangcheng2503/sbt-base:graalvm
     working_dir: /app
     volumes:
       - ".:/app"
